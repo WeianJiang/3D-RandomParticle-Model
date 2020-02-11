@@ -35,24 +35,24 @@ def dataGen(minimumRadi,maximumRadi):  # generate parameters of circle
         return dataGen(minimumRadi,maximumRadi)
 
 
-def sphereGenerator(trialTimes,minimumRadi,maximumRadi,circleData=[]):
-    if len(circleData)==0:
-        circleData.append(dataGen(minimumRadi,maximumRadi))
+def sphereGenerator(trialTimes,minimumRadi,maximumRadi,sphereData=[]):
+    if len(sphereData)==0:
+        sphereData.append(dataGen(minimumRadi,maximumRadi))
         formerLength=0
     else:
-        formerLength=len(circleData)
+        formerLength=len(sphereData)
     for number in range(trialTimes):
         newCircle = dataGen(minimumRadi,maximumRadi)
         looptimes = 0
-        for i in range(len(circleData)):
-            if overlapDetect(newCircle[0], newCircle[1], newCircle[2],newCircle[3], circleData[i][0], circleData[i][1], circleData[i][2],circleData[i][3]):
+        for i in range(len(sphereData)):
+            if overlapDetect(newCircle[0], newCircle[1], newCircle[2],newCircle[3], sphereData[i][0], sphereData[i][1], sphereData[i][2],sphereData[i][3]):
                 break
             looptimes += 1
-        if looptimes == len(circleData):
-            circleData.append(newCircle)
-    for order in range(formerLength,len(circleData)):
-        circleData[order].append(order)
-    return circleData
+        if looptimes == len(sphereData):
+            sphereData.append(newCircle)
+    for order in range(formerLength,len(sphereData)):
+        sphereData[order].append(order)
+    return sphereData
 # set3DSize(1,2,3)
 # print xSize, ySize, zSize
 
@@ -69,17 +69,19 @@ if __name__=="__main__":
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
     import mpl_toolkits.mplot3d
-    set3DSize(150,150,150)
+    set3DSize(xSize,ySize,zSize)
     fig = plt.figure(figsize=(6, 6), dpi=100)
     ax=Axes3D(fig)
-    ax.set_xlim(0,150)
-    ax.set_ylim(0,150)
-    ax.set_zlim(0,150)
+    ax.set_xlim(0,xSize)
+    ax.set_ylim(0,ySize)
+    ax.set_zlim(0,zSize)
 
-    sphereData=sphereGenerator(3,8,10)
+    sphereData=sphereGenerator(200,8,10)
+    # sphereData=np.array(sphereData)
+    # np.savetxt('sphereData.txt',sphereData)
+    sphereData=np.loadtxt('sphereData.txt')
     for i in range(len(sphereData)):  # draw module
         # "*" used for transfer three parameters in one
         drawCircle(sphereData[i][0],sphereData[i][1],sphereData[i][2],sphereData[i][3])
     plt.show()
-    sphereData=np.array(sphereData)
-    np.savetxt('sphereData.txt',sphereData)
+
