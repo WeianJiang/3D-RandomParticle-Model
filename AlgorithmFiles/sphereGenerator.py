@@ -70,6 +70,16 @@ def drawCircle(centroid_x, centroid_y, centroid_z, radi):
     ax.plot_surface(x, y, z)
 
 
+def prtVolumeRatio(sphereData=[]):
+    sphereNum=len(sphereData)
+    volumeSum=0
+    for i in range(sphereNum):
+        volumeSum+=sphereData[i][3]**3*4/3*3.14
+    totalVolume=xSize*ySize*zSize
+    print volumeSum/totalVolume
+
+
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
@@ -80,10 +90,11 @@ if __name__ == "__main__":
     ax.set_ylim(0, ySize)
     ax.set_zlim(0, zSize)
 
-    sphereData = sphereGenerator(200, 8, 10)
-    # sphereData=np.array(sphereData)
+    sphereData = sphereGenerator(2000, 8, 10)
+    sphereData=np.array(sphereData)
     # np.savetxt('sphereData.txt',sphereData)
-    sphereData = np.loadtxt('sphereData.txt')
+    prtVolumeRatio(sphereData)
+    # sphereData = np.loadtxt('sphereData.txt')
     for i in range(len(sphereData)):  # draw module
         drawCircle(sphereData[i][0], sphereData[i][1],
                    sphereData[i][2], sphereData[i][3])
