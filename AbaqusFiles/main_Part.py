@@ -1,7 +1,12 @@
 from abaqus import *
 from abaqusConstants import *
 
+def setModelName(modelname):
+    global modelName
+    modelName=modelname
 
+def createModel():
+    mdb.Model(name=modelName, modelType=STANDARD_EXPLICIT)
 
 s = mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=10.0)
 g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
