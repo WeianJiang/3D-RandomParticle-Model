@@ -1,3 +1,6 @@
 
 *.txt
 .DS_Store
+*.bat
+.DS_Store
+.DS_Store
