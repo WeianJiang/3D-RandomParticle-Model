@@ -9,19 +9,38 @@ class PropertyModule(MyModel):
         self._modelName=MyModel._modelName
         self._path=MyModel._path
         self._materialName=materialName
-        mdb.models[self._modelName].Material(name=self._materialName)
+        
 
     def setBasicInfo(self,elasticModules,possionRatio,density):
-        thisMaterial=mdb.models[self._modelName].materials[self._materialName]
-        thisMaterial.Elastic(table=((float(elasticModules), float(possionRatio)), ))
-        thisMaterial.Density(table=((density, ), ))
-        self._setCDPInfo()
-        self._sectionCreate()
-        #self._sectionAssign()
 
-    def _sectionCreate(self):
-        mdb.models[self._modelName].HomogeneousSolidSection(name='SecOf-'+str(self._materialName), 
-            material=self._materialName, thickness=None)
+        loadPath='Constitution/'+str(self._path)
+        ElasticData=np.loadtxt(loadPath+'/'+self._materialName+'Elastic.txt')
+        E_SF=np.loadtxt(loadPath+'/'+self._materialName+'ElasticScaleFactor.txt')
+
+        SampleSize=len(E_SF)
+        randomPick=np.random.randint(0,SampleSize,SampleSize)
+
+        for i in range(len(ElasticData)):
+
+            materialName=self._materialName+'-'+str(i)
+            random=randomPick[i]
+
+            mdb.models[self._modelName].Material(name=materialName)
+            thisMaterial=mdb.models[self._modelName].materials[materialName]
+            thisMaterial.Elastic(table=((float(elasticModules*E_SF[random]), float(possionRatio)), ))
+            thisMaterial.Density(table=((density, ), ))
+
+            self._sectionCreate(materialName)
+
+        if self._materialName=='Matrix':
+            self._setCDPInfo()
+        elif self._materialName=='Interface':
+            self._setCDPInfo()
+
+
+    def _sectionCreate(self,materialName):
+        mdb.models[self._modelName].HomogeneousSolidSection(name='SecOf-'+str(materialName), 
+            material=materialName, thickness=None)
 
     def _sectionAssign(self):
         partName='MeshPart'
@@ -40,14 +59,28 @@ class PropertyModule(MyModel):
         Tensile=np.loadtxt(loadPath+'/Tension.txt')
         TensionDamage=np.loadtxt(loadPath+'/TensionDamage.txt')
         CompressionDamage=np.loadtxt(loadPath+'/CompressionDamage.txt')
-        thisMaterial=mdb.models[self._modelName].materials[self._materialName]
-        thisMaterial.ConcreteDamagedPlasticity(table=((
-        38.0, 0.1, 1.16, 0.667, 0.0), ))
-        thisMaterial.concreteDamagedPlasticity.ConcreteCompressionHardening(
-        table=(Compress))
-        thisMaterial.concreteDamagedPlasticity.ConcreteTensionStiffening(
-        table=(Tensile),type=STRAIN)
-        thisMaterial.concreteDamagedPlasticity.ConcreteTensionDamage(
-        table=TensionDamage, type=STRAIN) 
-        thisMaterial.concreteDamagedPlasticity.ConcreteCompressionDamage(
-        table=CompressionDamage) 
+
+        CDP_SF=np.loadtxt(loadPath+'/'+self._materialName+'CDPScaleFactor.txt')
+        SampleSize=len(CDP_SF)
+        randomPick=np.random.randint(0,SampleSize,SampleSize)
+        for i in range(SampleSize):
+            
+            materialName=self._materialName+'-'+str(i)
+            thisMaterial=mdb.models[self._modelName].materials[materialName]
+            thisMaterial.ConcreteDamagedPlasticity(table=((
+            38.0, 0.1, 1.16, 0.667, 0.0), ))
+
+            random=randomPick[i]
+            Compress[0]=Compress[0]*CDP_SF[random]
+            Tensile[0]=Tensile[0]*CDP_SF[random]
+            TensionDamage[0]=TensionDamage[0]*CDP_SF[random]
+            CompressionDamage[0]=CompressionDamage[0]*CDP_SF[random]
+            
+            thisMaterial.concreteDamagedPlasticity.ConcreteCompressionHardening(
+            table=(Compress))
+            thisMaterial.concreteDamagedPlasticity.ConcreteTensionStiffening(
+            table=(Tensile),type=STRAIN)
+            thisMaterial.concreteDamagedPlasticity.ConcreteTensionDamage(
+            table=TensionDamage, type=STRAIN) 
+            thisMaterial.concreteDamagedPlasticity.ConcreteCompressionDamage(
+            table=CompressionDamage) 
