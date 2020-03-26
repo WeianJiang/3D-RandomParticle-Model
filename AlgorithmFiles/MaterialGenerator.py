@@ -29,7 +29,7 @@ class MaterialGenerator():
 
 if __name__=='__main__':
     Aggregate=MaterialGenerator('Aggregate')
-    Aggregate.elasticGenerator(60000,9)
+    Aggregate.elasticGenerator(1,9)
     Matrix=MaterialGenerator('Matrix')
     matrixEla=Matrix.elasticGenerator(1,3)
     matrixCDP=Matrix.CDPScaleFactorGenerator(1,3)

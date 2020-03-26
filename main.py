@@ -5,6 +5,7 @@ from AlgorithmFiles.GridTopo import GridTopo
 
 
 model=GridTopo()
-model.setPath(1)
-model.setSize(150,150)
-model.setMeshSize(15)
+model.setPath(2)
+model.setSize(100,100)
+model.setMeshSize(5)
+model.setLoad(-8)

@@ -48,15 +48,13 @@ NodeData=np.loadtxt('NodeData.txt')
 ElementData=[]
 ElementData=np.loadtxt('ElementData.txt')
 eleNumber=len(ElementData)
-sphereData=[]
 MatrixSet=[]#the set containing the matrix
 AggregateSet=[]
 ITZSet=[]
 for i in range(eleNumber):
-    print i
     x_sum,y_sum,z_sum=0,0,0
     nodeNumber=8
-    for j in range(1,9):
+    for j in range(0,8):
         node=ElementData[i][j]
         nodeCoordinate=_findNodeCoordinate(node)#return [number,x,y,z]
         x_sum+=nodeCoordinate[1]
