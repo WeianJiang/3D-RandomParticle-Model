@@ -10,6 +10,14 @@ class LoadModule(MyModel):
         mdb.models[MyModel._modelName].SmoothStepAmplitude(name='SmooothStepAMP', timeSpan=STEP, 
         data=((0.0, 0.0), (1.0, 1.0)))
 
+    def _createBoundary(self):
+        a = mdb.models[MyModel._modelName].rootAssembly#the set was created in main_interation
+        region = a.sets['BoundaryNodeSet']
+        mdb.models[MyModel._modelName].DisplacementBC(name='Boundary', 
+            createStepName='Initial', region=region, u1=UNSET, u2=SET, u3=UNSET, 
+            ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude=UNSET, distributionType=UNIFORM, 
+            fieldName='', localCsys=None)
+
     def createLoad(self,load):
 
         self._createAMP()
@@ -25,6 +33,7 @@ class LoadModule(MyModel):
             ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='SmooothStepAMP', fixed=OFF, 
             distributionType=UNIFORM, fieldName='', localCsys=None)
 
+        self._createBoundary()
 
-    def _createBoundary(self):
-        
+
+    
