@@ -24,3 +24,7 @@ class LoadModule(MyModel):
             createStepName='Step-1', region=region, u1=UNSET, u2=load, u3=UNSET, 
             ur1=UNSET, ur2=UNSET, ur3=UNSET, amplitude='SmooothStepAMP', fixed=OFF, 
             distributionType=UNIFORM, fieldName='', localCsys=None)
+
+
+    def _createBoundary(self):
+        
