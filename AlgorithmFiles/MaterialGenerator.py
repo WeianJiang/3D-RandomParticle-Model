@@ -28,18 +28,33 @@ class MaterialGenerator():
 
 
 if __name__=='__main__':
-    Aggregate=MaterialGenerator('Aggregate')
-    Aggregate.elasticGenerator(1,9)
-    Matrix=MaterialGenerator('Matrix')
-    matrixEla=Matrix.elasticGenerator(1,3)
-    matrixCDP=Matrix.CDPScaleFactorGenerator(1,3)
-    Interface=MaterialGenerator('Interface')
-    interfaceEla=Interface.elasticGenerator(1,1.5)
-    interfaceCDP=Interface.CDPScaleFactorGenerator(1,1.5)
+    # Aggregate=MaterialGenerator('Aggregate')
+    # Aggregate.elasticGenerator(1,9)
+    # Matrix=MaterialGenerator('Matrix')
+    # matrixEla=Matrix.elasticGenerator(1,3)
+    # matrixCDP=Matrix.CDPScaleFactorGenerator(1,3)
+    # Interface=MaterialGenerator('Interface')
+    # interfaceEla=Interface.elasticGenerator(1,1.5)
+    # interfaceCDP=Interface.CDPScaleFactorGenerator(1,1.5)
     import matplotlib.pyplot as plt
     # plt.hist(matrixEla)
     # plt.hist(interfaceEla)
-    plt.hist(interfaceCDP)
-    plt.hist(matrixCDP)
+
+    matrix150CDP=np.loadtxt('Matrix150Strength.txt')
+    print np.average(matrix150CDP)
+    plt.hist(matrix150CDP)
+
+    matrix100CDP=np.loadtxt('Matrix100Strength.txt')
+    print np.average(matrix100CDP)
+    plt.hist(matrix100CDP)
+    
+    interface150CDP=np.loadtxt('Interface150Strength.txt')
+    print np.average(interface150CDP)
+    plt.hist(interface150CDP)
+
+    interface100CDP=np.loadtxt('Interface100Strength.txt')
+    print np.average(interface100CDP)
+    plt.hist(interface100CDP)   
+    
 
     plt.show()

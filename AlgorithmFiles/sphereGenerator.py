@@ -83,15 +83,15 @@ def prtVolumeRatio(sphereData=[]):
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
-    set3DSize(100, 100, 100)
+    set3DSize(150, 150, 150)
     fig = plt.figure(figsize=(6, 6), dpi=100)
     ax = Axes3D(fig)
     ax.set_xlim(0, xSize)
     ax.set_ylim(0, ySize)
     ax.set_zlim(0, zSize)
 
-    sphereData = sphereGenerator(2000, 8, 10)
-    sphereData = sphereGenerator(20000, 5, 8)
+    sphereData = sphereGenerator(300, 8, 10)
+    #sphereData = sphereGenerator(200, 5, 8)
     sphereData=np.array(sphereData)
     np.savetxt('sphereData.txt',sphereData)
     prtVolumeRatio(sphereData)

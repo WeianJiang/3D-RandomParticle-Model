@@ -117,7 +117,7 @@ def positionResult(xmean,ymean,zmean,sphereData=[]):
     if insider>=1:
         return 'Aggregate'
     elif border>=1:
-        return 'ITZ'
+        return 'Interface'
     elif outsider==sphereNum:
         return 'Matrix'
 
@@ -132,36 +132,88 @@ def sectionAssign():
     p = mdb.models[modelName].parts[partName]
     elements=p.elements
     eleNum=len(elements)
+    MatrixSet=[]
+    InterfaceSet=[]
+    AggregateSet=[]
+    # #the first step, determine the node positions
+    # nodes=p.nodes
+    # nodePosition=[]
+    # for i in range(len(nodes)):
+    #     x_coordinate=nodes[i][0]
+    #     y_coordinate=nodes[i][1]
+    #     z_coordinate=nodes[i][2]
+    #     result=positionResult(x_coordinate,y_coordinate,z_coordinate,sphereData)
+    #     nodePosition.append([i,result])
+    # #got the node NO and its position results
+    
+    #the following program, is to determine the element position by the node number.
     for i in range(eleNum):
-        x_sum,y_sum,z_sum=0,0,0
-        nodeNumber=8
-        for j in range(0,8):
-            nodes=elements[i].getNodes()
-            nodeCoordinate=nodes[j].coordinates
-            x_sum+=nodeCoordinate[0]
-            y_sum+=nodeCoordinate[1]
-            z_sum+=nodeCoordinate[2]
-        x_mean=x_sum/nodeNumber
-        y_mean=y_sum/nodeNumber
-        z_mean=z_sum/nodeNumber
-        #for now you have got the gravity point of the elements
-        #spheredata 0 1 2 3 for x y z radi
-        result=positionResult(x_mean,y_mean,z_mean,sphereData)
-        if result=='Matrix':
+        nodes=elements[i].getNodes()
+        MatrixCounter=0
+        InterfaceCounter=0
+        AggregateCounter=0
+        Finalresult=''
+
+        for node in nodes:
+            x_coordinate=node.coordinates[0]
+            y_coordinate=node.coordinates[1]
+            z_coordinate=node.coordinates[2]
+            result=positionResult(x_coordinate,y_coordinate,z_coordinate,sphereData)
+            if result=='Matrix':
+                MatrixCounter+=1
+            elif result=='Interface':
+                InterfaceCounter+=1
+            elif result=='Aggregate':
+                AggregateCounter+=1
+
+        if MatrixCounter==8:
+            Finalresult='Matrix'
+        elif AggregateCounter==8:
+            Finalresult='Aggregate'
+        else:
+            Finalresult='Interface'
+
+        if Finalresult=='Matrix':
             region = regionToolset.Region(elements=elements[i:i+1])
             p.SectionAssignment(region=region, sectionName='SecOf-'+'Matrix-'+str(np.random.randint(0,1000)), offset=0.0, 
             offsetType=MIDDLE_SURFACE, offsetField='', 
             thicknessAssignment=FROM_SECTION)
-        elif result=='Aggregate':
+            if len(MatrixSet)==0:
+                MatrixSet=elements[i:i+1]
+            else:
+                MatrixSet=MatrixSet+elements[i:i+1]
+
+        elif Finalresult=='Aggregate':
             region = regionToolset.Region(elements=elements[i:i+1])
             p.SectionAssignment(region=region, sectionName='SecOf-'+'Aggregate-'+str(np.random.randint(0,1000)), offset=0.0, 
             offsetType=MIDDLE_SURFACE, offsetField='', 
             thicknessAssignment=FROM_SECTION)
-        elif result=='ITZ':
+            if len(AggregateSet)==0:
+                AggregateSet=elements[i:i+1]
+            else:
+                AggregateSet=AggregateSet+elements[i:i+1]
+
+        elif Finalresult=='Interface':
             region = regionToolset.Region(elements=elements[i:i+1])
             p.SectionAssignment(region=region, sectionName='SecOf-'+'Interface-'+str(np.random.randint(0,1000)), offset=0.0, 
             offsetType=MIDDLE_SURFACE, offsetField='', 
             thicknessAssignment=FROM_SECTION)
+            if len(InterfaceSet)==0:
+                InterfaceSet=elements[i:i+1]
+            else:
+                InterfaceSet=InterfaceSet+elements[i:i+1]
+    try:
+        p.Set(elements=MatrixSet, name='Matrix-Set')
+    except:
+        pass
+    try:
+        p.Set(elements=AggregateSet, name='Aggregate-Set')
+    except:
+        pass
+    try:
+        p.Set(elements=InterfaceSet, name='Interface-Set')
+    except:
+        pass
 
 
     
