@@ -90,7 +90,7 @@ if __name__ == "__main__":
     ax.set_ylim(0, ySize)
     ax.set_zlim(0, zSize)
 
-    sphereData = sphereGenerator(300, 8, 10)
+    sphereData = sphereGenerator(700, 8, 10)
     #sphereData = sphereGenerator(200, 5, 8)
     sphereData=np.array(sphereData)
     np.savetxt('sphereData.txt',sphereData)

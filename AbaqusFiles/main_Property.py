@@ -153,6 +153,7 @@ def sectionAssign():
         InterfaceCounter=0
         AggregateCounter=0
         Finalresult=''
+        nodeNum=len(nodes)
 
         for node in nodes:
             x_coordinate=node.coordinates[0]
@@ -166,9 +167,9 @@ def sectionAssign():
             elif result=='Aggregate':
                 AggregateCounter+=1
 
-        if MatrixCounter==8:
+        if MatrixCounter==nodeNum:
             Finalresult='Matrix'
-        elif AggregateCounter==8:
+        elif AggregateCounter==nodeNum:
             Finalresult='Aggregate'
         else:
             Finalresult='Interface'

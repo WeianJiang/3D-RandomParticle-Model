@@ -34,11 +34,15 @@ if __name__=='__main__':
     # matrixEla=Matrix.elasticGenerator(1,3)
     # matrixCDP=Matrix.CDPScaleFactorGenerator(1,3)
     # Interface=MaterialGenerator('Interface')
-    # interfaceEla=Interface.elasticGenerator(1,1.5)
-    # interfaceCDP=Interface.CDPScaleFactorGenerator(1,1.5)
+    # interfaceEla=Interface.elasticGenerator(1,1.3)
+    # interfaceCDP=Interface.CDPScaleFactorGenerator(1,1.3)
     import matplotlib.pyplot as plt
     # plt.hist(matrixEla)
     # plt.hist(interfaceEla)
+
+    matrix200CDP=np.loadtxt('Matrix200Strength.txt')
+    print np.average(matrix200CDP)
+    plt.hist(matrix200CDP)
 
     matrix150CDP=np.loadtxt('Matrix150Strength.txt')
     print np.average(matrix150CDP)
@@ -47,6 +51,11 @@ if __name__=='__main__':
     matrix100CDP=np.loadtxt('Matrix100Strength.txt')
     print np.average(matrix100CDP)
     plt.hist(matrix100CDP)
+
+    interface200CDP=np.loadtxt('Interface200Strength.txt')
+    print np.average(interface200CDP)
+    plt.hist(interface200CDP)
+
     
     interface150CDP=np.loadtxt('Interface150Strength.txt')
     print np.average(interface150CDP)
