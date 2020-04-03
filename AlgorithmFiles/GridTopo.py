@@ -67,7 +67,7 @@ class GridTopo(MyModel):
 
         myAssembly=AssemblyModule()
         myAssembly.createInstance()
-        myAssembly.createReferencePoint(self._length/2,self._height,self._length/2)
+        # myAssembly.createReferencePoint(self._length/2,self._height,self._length/2)
         
     def _Step(self):
 

@@ -22,6 +22,7 @@ class PartModule(MyModel):
         
 
 
+
     def _createPart(self):
         s = mdb.models[self._modelName].ConstrainedSketch(name='__profile__', 
             sheetSize=200.0)
@@ -57,3 +58,7 @@ class PartModule(MyModel):
                 elemType3))
             p.generateMesh()
             p.PartFromMesh(name='MeshPart', copySets=True)
+
+        
+        
+    
