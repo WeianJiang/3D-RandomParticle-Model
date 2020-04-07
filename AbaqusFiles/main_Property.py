@@ -15,14 +15,6 @@ class PropertyModule(MyModel):
 
     def setBasicInfo(self,elasticModules,possionRatio,density):
 
-        #---this section create the loading plate
-        mdb.models[MyModel._modelName].Material(name='LoadingPlate')
-        mdb.models[MyModel._modelName].materials['LoadingPlate'].Density(table=((1.0, 
-            ), ))
-        mdb.models[MyModel._modelName].materials['LoadingPlate'].Elastic(table=((
-            9999999.0, 0.2), ))
-        #loading plate creation section
-
         loadPath='Constitution/'+str(self._path)
         ElasticData=np.loadtxt(loadPath+'/'+self._materialName+'Elastic.txt')
         #E_SF=np.loadtxt(loadPath+'/'+self._materialName+'ElasticScaleFactor.txt')

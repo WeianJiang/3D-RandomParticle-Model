@@ -12,7 +12,7 @@ class InteractionModule(MyModel):
             sheetSize=200.0)
         g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
         s.setPrimaryObject(option=STANDALONE)
-        s.rectangle(point1=(-plateSize, 10.0), point2=(plateSize, -10.0))
+        s.rectangle(point1=(-plateSize/2, 10.0), point2=(plateSize/2, -10.0))
         p = mdb.models[MyModel._modelName].Part(name='LoadingPlate', 
             dimensionality=THREE_D, type=DEFORMABLE_BODY)
         p = mdb.models[MyModel._modelName].parts['LoadingPlate']
@@ -80,7 +80,7 @@ class InteractionModule(MyModel):
         s1 = a.instances['LoadingPlate-Up'].faces
         UpperPlateSurface = s1.findAt(((0.5*MyModel._sectionLength, MyModel._sectionHeight, 0.5*MyModel._sectionLength), ))
         UpperPlateRegion=a.Surface(side1Faces=UpperPlateSurface, name='UpperPlateSurface')
-        mdb.models[MyModel].Tie(name='UpperNodeTie', master=UpperPlateRegion, 
+        mdb.models[MyModel._modelName].Tie(name='UpperNodeTie', master=UpperPlateRegion, 
             slave=UpperNodeRegion, positionToleranceMethod=COMPUTED, adjust=ON, 
             tieRotations=ON, thickness=ON)
 
@@ -88,20 +88,26 @@ class InteractionModule(MyModel):
         s1 = a.instances['LoadingPlate-Low'].faces
         LowerPlateSurface = s1.findAt(((0.5*MyModel._sectionLength, 0, 0.5*MyModel._sectionLength), ))
         LowerPlateRegion=a.Surface(side1Faces=LowerPlateSurface, name='LowerPlateSurface')
-        mdb.models[MyModel].Tie(name='LowerNodeTie', master=LowerPlateRegion, 
+        mdb.models[MyModel._modelName].Tie(name='LowerNodeTie', master=LowerPlateRegion, 
             slave=LowerNodeRegion, positionToleranceMethod=COMPUTED, adjust=ON, 
             tieRotations=ON, thickness=ON)
+        #end Interaction
+
+        p = mdb.models[MyModel._modelName].parts['LoadingPlate']
+        p.seedPart(size=10.0, deviationFactor=0.1, minSizeFactor=0.1)
+        p.generateMesh()
         
 
 
 
     def setCoupling(self):
+        self._createLoadingPlate()
         length=MyModel._sectionLength
         height=MyModel._sectionHeight
         a = mdb.models[MyModel._modelName].rootAssembly
-        refPoints1=a.ReferencePoint(point=(0.5*length, height+20, 0.5*length))
-        # r1 = a.referencePoints
-        # refPoints1=(r1.findAt([length/2,height,length/2]),)
+        a.ReferencePoint(point=(0.5*length, height+20, 0.5*length))
+        r1 = a.referencePoints
+        refPoints1=(r1.findAt([0.5*length, height+20, 0.5*length]),)
         region1=a.Set(referencePoints=refPoints1, name='m_Set-Coupling')
 
         s1 = a.instances['LoadingPlate-Up'].faces
