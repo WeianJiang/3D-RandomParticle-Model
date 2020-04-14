@@ -94,10 +94,12 @@ class InteractionModule(MyModel):
         #create contact property
         mdb.models[MyModel._modelName].ContactProperty('FrictionContact')
         mdb.models[MyModel._modelName].interactionProperties['FrictionContact'].TangentialBehavior(
-            formulation=PENALTY, directionality=ISOTROPIC, slipRateDependency=OFF, 
-            pressureDependency=OFF, temperatureDependency=OFF, dependencies=0, table=((
-            0.15, ), ), shearStressLimit=None, maximumElasticSlip=FRACTION, 
-            fraction=0.005, elasticSlipStiffness=None)
+            formulation=ROUGH)
+        # mdb.models[MyModel._modelName].interactionProperties['FrictionContact'].TangentialBehavior(
+        #     formulation=PENALTY, directionality=ISOTROPIC, slipRateDependency=OFF, 
+        #     pressureDependency=OFF, temperatureDependency=OFF, dependencies=0, table=((
+        #     0.15, ), ), shearStressLimit=None, maximumElasticSlip=FRACTION, 
+        #     fraction=0.005, elasticSlipStiffness=None)
 
 
         n1 = a.instances['MeshPart-1'].nodes
