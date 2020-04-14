@@ -10,6 +10,8 @@ class StepModule(MyModel):
         mdb.models[MyModel._modelName].fieldOutputRequests['F-Output-1'].setValues(
             variables=('S', 'SVAVG', 'PE', 'PEVAVG', 'PEEQ', 'PEEQVAVG', 'LE', 'U', 
             'V', 'A', 'RF', 'CSTRESS', 'DAMAGEC', 'DAMAGET', 'SDEG', 'EVF', 'STATUS'))
+        mdb.models[MyModel._modelName].fieldOutputRequests['F-Output-1'].setValues(
+            numIntervals=50)
 
 
 
