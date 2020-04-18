@@ -88,5 +88,5 @@ class GridTopo(MyModel):
     def _Job(self):
 
         job1=JobMoudle('Job-'+MyModel._modelName)
-        job1.createJob()
+        job1.createJob(2)
 
