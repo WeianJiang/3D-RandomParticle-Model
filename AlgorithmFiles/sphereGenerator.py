@@ -91,7 +91,7 @@ if __name__ == "__main__":
     ax.set_zlim(0, zSize)
 
     sphereData = sphereGenerator(150, 8, 10)
-    sphereData = sphereGenerator(200, 5, 8)
+    sphereData = sphereGenerator(20000, 5, 8)
     sphereData=np.array(sphereData)
     np.savetxt('sphereData.txt',sphereData)
     prtVolumeRatio(sphereData)
