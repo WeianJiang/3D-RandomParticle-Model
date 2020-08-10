@@ -5,5 +5,6 @@ class MyModel():
     _path=1
     _sectionHeight=0
     _sectionLength=0
+    _sphereNum=0
 
         

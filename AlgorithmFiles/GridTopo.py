@@ -14,6 +14,10 @@ class GridTopo(MyModel):
 
     def __init__(self):
         pass
+
+    def _setImportFile(self,CircleFileName='sphereData.txt'):
+        self.circleData = np.loadtxt('ModelInfoFiles/'+str(MyModel._path)+'/'+CircleFileName)
+        MyModel._circleNum=len(self.circleData)    
     
     def setPath(self,Path,name='Default'):
         MyModel._path=Path

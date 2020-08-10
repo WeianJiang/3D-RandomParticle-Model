@@ -11,6 +11,41 @@ class PropertyModule(MyModel):
         self._modelName=MyModel._modelName
         self._path=MyModel._path
         self._materialName=materialName
+
+    def materialCreate(self,elaticModules,possionRatio,density):
+
+        if self._materialName=='Matrix':
+
+            materialName='Matrix'
+
+            mdb.models[MyModel._modelName].Material(name=materialName)
+            mdb.models[MyModel._modelName].materials[materialName].Elastic(table=((float(elaticModules), float(possionRatio)), ))
+            mdb.models[MyModel._modelName].materials[materialName].Density(table=((density, ), ))
+
+            self._sectionCreate(materialName)
+
+        else:
+
+            for i in range(MyModel._circleNum):
+
+                materialName=self._materialName+'-'+str(i)
+
+                mdb.models[MyModel._modelName].Material(name=materialName)
+                mdb.models[MyModel._modelName].materials[materialName].Elastic(table=((float(elaticModules), float(possionRatio)), ))
+                mdb.models[MyModel._modelName].materials[materialName].Density(table=((density, ), ))
+
+                self._sectionCreate(materialName)
+        
+
+        if self._materialName=='Aggregate':
+
+            pass
+
+        else:
+
+            self._setCDPinfo()
+
+        self._assignSection()
         
 
     def setBasicInfo(self,elasticModules,possionRatio,density):
