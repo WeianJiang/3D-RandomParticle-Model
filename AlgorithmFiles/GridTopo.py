@@ -56,15 +56,14 @@ class GridTopo(MyModel):
     def _Property(self):
 
         Aggregate=PropertyModule('Aggregate')
-        Aggregate.setBasicInfo(51246,0.3,2.7e-9)
+        Aggregate.materialCreate(51246,0.3,2.7e-9)
         
-        Matrix=PropertyModule('Matrix')
-        Matrix.setBasicInfo(23000,0.2,2e-9)
-
         Interface=PropertyModule('Interface')
-        Interface.setBasicInfo(12000,0.2,2e-9)
+        Interface.materialCreate(2.56E+04,0.2,2e-9)
 
-        sectionAssign()
+        Matrix=PropertyModule('Matrix')
+        Matrix.materialCreate(3.29E+04,0.2,2e-9)
+
 
 
     def _Assembly(self):
