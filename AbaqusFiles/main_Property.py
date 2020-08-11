@@ -12,7 +12,18 @@ class PropertyModule(MyModel):
         self._path=MyModel._path
         self._materialName=materialName
 
+
     def materialCreate(self,elaticModules,possionRatio,density):
+
+        materialName=self._materialName
+        mdb.models[MyModel._modelName].Material(name=materialName)
+        mdb.models[MyModel._modelName].materials[materialName].Elastic(table=((float(elaticModules), float(possionRatio)), ))
+        mdb.models[MyModel._modelName].materials[materialName].Density(table=((density, ), ))
+
+        self._sectionCreate(materialName)
+
+
+    def randomMaterialCreate(self,elaticModules,possionRatio,density):
 
         if self._materialName=='Matrix':
 
@@ -172,40 +183,9 @@ class PropertyModule(MyModel):
     def _cal(self,crackStrain,Stress,damageFactor,elasticScaleFactor=1):
         return crackStrain-(damageFactor/(1-damageFactor))*(Stress/(23000*elasticScaleFactor))
 
-    def _positionDetermine(self,x,y,z,xcentroid,ycentroid,zcentroid,radi):
-        xdistance=abs(x-xcentroid)
-        ydistance=abs(y-ycentroid)
-        zdistance=abs(z-zcentroid)
-        distance=np.sqrt(xdistance**2+ydistance**2+zdistance**2)
-        thickness=0.1*radi
-        if distance>radi:
-            return 'OutSide'
-        elif distance<radi and distance>radi-thickness:
-            return 'OnBorder'
-        else:
-            return 'InSide'
 
 
-    def _positionResult(self,xmean,ymean,zmean,sphereData=[]):
-        insider,outsider,border=0,0,0
-        sphereNum=len(sphereData)
-        for sphere in sphereData:
-            result=self._positionDetermine(xmean,ymean,zmean,sphere[0],sphere[1],sphere[2],sphere[3])
-            if result=='InSide':
-                insider+=1
-            elif result=='OutSide':
-                outsider+=1
-            else:
-                border+=1
-        if insider>=1:
-            return 'Aggregate'
-        elif border>=1:
-            return 'Interface'
-        elif outsider==sphereNum:
-            return 'Matrix'
-
-
-    def _assignSection(self):
+    def _assignRandomSection(self):
         modelName=MyModel._modelName
         path=MyModel._path
         partName='MeshPart'
@@ -287,7 +267,7 @@ class PropertyModule(MyModel):
                 else:
                     InterfaceSet=InterfaceSet+elements[i:i+1]
         try:
-            p.Set(elements=MatrixSet, name='Matrix-Set')
+            p.Set(elements=MatrixSet, name='Matrix-Set') 
         except:
             pass
         try:
@@ -300,4 +280,129 @@ class PropertyModule(MyModel):
             pass
 
 
-        
+def _positionDetermine(x,y,z,xcentroid,ycentroid,zcentroid,radi):
+    xdistance=abs(x-xcentroid)
+    ydistance=abs(y-ycentroid)
+    zdistance=abs(z-zcentroid)
+    distance=np.sqrt(xdistance**2+ydistance**2+zdistance**2)
+    thickness=0.1*radi
+    if distance>radi:
+        return 'OutSide'
+    elif distance<radi and distance>radi-thickness:
+        return 'OnBorder'
+    else:
+        return 'InSide'
+
+
+def _positionResult(xmean,ymean,zmean,sphereData=[]):
+    insider,outsider,border=0,0,0
+    sphereNum=len(sphereData)
+    for sphere in sphereData:
+        result=_positionDetermine(xmean,ymean,zmean,sphere[0],sphere[1],sphere[2],sphere[3])
+        if result=='InSide':
+            insider+=1
+        elif result=='OutSide':
+            outsider+=1
+        else:
+            border+=1
+    if insider>=1:
+        return 'Aggregate'
+    elif border>=1:
+        return 'Interface'
+    elif outsider==sphereNum:
+        return 'Matrix'
+
+
+def assignSection():
+    modelName=MyModel._modelName
+    path=MyModel._path
+    partName='MeshPart'
+
+    sphereData=[]
+    sphereData=np.loadtxt('ModelInfoFiles/'+str(path)+'/sphereData.txt')# 0 1 2 3=x y z r
+    p = mdb.models[modelName].parts[partName]
+    elements=p.elements
+    eleNum=len(elements)
+    MatrixSet=[]
+    InterfaceSet=[]
+    AggregateSet=[]
+    # #the first step, determine the node positions
+    # nodes=p.nodes
+    # nodePosition=[]
+    # for i in range(len(nodes)):
+    #     x_coordinate=nodes[i][0]
+    #     y_coordinate=nodes[i][1]
+    #     z_coordinate=nodes[i][2]
+    #     result=positionResult(x_coordinate,y_coordinate,z_coordinate,sphereData)
+    #     nodePosition.append([i,result])
+    # #got the node NO and its position results
+    
+    #the following program, is to determine the element position by the node number.
+    for i in range(eleNum):
+        nodes=elements[i].getNodes()
+        MatrixCounter=0
+        InterfaceCounter=0
+        AggregateCounter=0
+        Finalresult=''
+        nodeNum=len(nodes)
+
+        for node in nodes:
+            x_coordinate=node.coordinates[0]
+            y_coordinate=node.coordinates[1]
+            z_coordinate=node.coordinates[2]
+            result=_positionResult(x_coordinate,y_coordinate,z_coordinate,sphereData)
+            if result=='Matrix':
+                MatrixCounter+=1
+            elif result=='Interface':
+                InterfaceCounter+=1
+            elif result=='Aggregate':
+                AggregateCounter+=1
+
+        if MatrixCounter==nodeNum:
+            Finalresult='Matrix'
+        elif AggregateCounter==nodeNum:
+            Finalresult='Aggregate'
+        else:
+            Finalresult='Interface'
+
+        if Finalresult=='Matrix':
+            if len(MatrixSet)==0:
+                MatrixSet=elements[i:i+1]
+            else:
+                MatrixSet=MatrixSet+elements[i:i+1]
+
+        elif Finalresult=='Aggregate':
+            if len(AggregateSet)==0:
+                AggregateSet=elements[i:i+1]
+            else:
+                AggregateSet=AggregateSet+elements[i:i+1]
+
+        elif Finalresult=='Interface':
+            if len(InterfaceSet)==0:
+                InterfaceSet=elements[i:i+1]
+            else:
+                InterfaceSet=InterfaceSet+elements[i:i+1]
+    try:
+        region=p.Set(elements=MatrixSet, name='Matrix-Set') #create set and return the handler of region
+        #region = p.sets['Matrix-Set']
+        p.SectionAssignment(region=region, sectionName='SecOf-Matrix', offset=0.0, 
+            offsetType=MIDDLE_SURFACE, offsetField='', 
+            thicknessAssignment=FROM_SECTION)
+    except:
+        pass
+    try:
+        region=p.Set(elements=AggregateSet, name='Aggregate-Set')
+        #region = p.sets['Matrix-Set']
+        p.SectionAssignment(region=region, sectionName='SecOf-Aggregate', offset=0.0, 
+            offsetType=MIDDLE_SURFACE, offsetField='', 
+            thicknessAssignment=FROM_SECTION)
+    except:
+        pass
+    try:
+        region=p.Set(elements=InterfaceSet, name='Interface-Set')
+        #region = p.sets['Matrix-Set']
+        p.SectionAssignment(region=region, sectionName='SecOf-Interface', offset=0.0, 
+            offsetType=MIDDLE_SURFACE, offsetField='', 
+            thicknessAssignment=FROM_SECTION)
+    except:
+        pass

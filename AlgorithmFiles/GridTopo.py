@@ -2,7 +2,7 @@ from AbaqusFiles.ModelModule import MyModel
 from AbaqusFiles.main_Initial import createModel
 from AbaqusFiles.main_Part import PartModule
 from AbaqusFiles.main_Property import PropertyModule
-from AbaqusFiles.main_Property import sectionAssign
+from AbaqusFiles.main_Property import assignSection
 from AbaqusFiles.main_Step import StepModule
 from AbaqusFiles.main_Assembly import AssemblyModule
 from AbaqusFiles.main_Interaction import InteractionModule
@@ -16,12 +16,14 @@ class GridTopo(MyModel):
         pass
 
     def _setImportFile(self,CircleFileName='sphereData.txt'):
+        import numpy as np
         self.circleData = np.loadtxt('ModelInfoFiles/'+str(MyModel._path)+'/'+CircleFileName)
-        MyModel._circleNum=len(self.circleData)    
+        MyModel._sphereNum=len(self.circleData)    
     
     def setPath(self,Path,name='Default'):
         MyModel._path=Path
         MyModel._modelName='Model-'+str(name)
+        self._setImportFile()
         createModel()
 
     def setSize(self,length,height):
@@ -63,6 +65,8 @@ class GridTopo(MyModel):
 
         Matrix=PropertyModule('Matrix')
         Matrix.materialCreate(3.29E+04,0.2,2e-9)
+
+        assignSection()
 
 
 
