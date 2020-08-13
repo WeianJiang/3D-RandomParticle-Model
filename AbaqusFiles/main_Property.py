@@ -22,6 +22,14 @@ class PropertyModule(MyModel):
 
         self._sectionCreate(materialName)
 
+        if self._materialName=='Aggregate':
+
+            pass
+
+        else:
+
+            self._setCDPinfo()
+
 
     def randomMaterialCreate(self,elaticModules,possionRatio,density):
 
@@ -56,7 +64,7 @@ class PropertyModule(MyModel):
 
             self._setCDPinfo()
 
-        self._assignSection()
+        #self._assignSection()
         
 
     # def setBasicInfo(self,elasticModules,possionRatio,density):
@@ -98,25 +106,23 @@ class PropertyModule(MyModel):
 
         if self._materialName=='Interface':
 
+            materialName=self._materialName
+
             Compress=np.loadtxt('Constitution/'+str(MyModel._path)+'/Interface_Compression.txt')
             Tensile=np.loadtxt('Constitution/'+str(MyModel._path)+'/Interface_Tension.txt')
             TensionDamage=np.loadtxt('Constitution/'+str(MyModel._path)+'/Interface_TensionDamage.txt')
             CompressionDamage=np.loadtxt('Constitution/'+str(MyModel._path)+'/Interface_CompressionDamage.txt')
 
-            for i in range(MyModel._sphereNum):
-                
-                materialName=self._materialName+'-'+str(i)
-
-                mdb.models[MyModel._modelName].materials[materialName].ConcreteDamagedPlasticity(table=((
-                38.0, 0.1, 1.16, 0.667, 0.0), ))
-                mdb.models[MyModel._modelName].materials[materialName].concreteDamagedPlasticity.ConcreteCompressionHardening(
-                table=(Compress))
-                mdb.models[MyModel._modelName].materials[materialName].concreteDamagedPlasticity.ConcreteTensionStiffening(
-                table=(Tensile),type=STRAIN)
-                mdb.models[MyModel._modelName].materials[materialName].concreteDamagedPlasticity.ConcreteTensionDamage(
-                table=TensionDamage, type=STRAIN) 
-                mdb.models[MyModel._modelName].materials[materialName].concreteDamagedPlasticity.ConcreteCompressionDamage(
-                table=CompressionDamage) 
+            mdb.models[MyModel._modelName].materials[materialName].ConcreteDamagedPlasticity(table=((
+            38.0, 0.1, 1.16, 0.667, 0.0), ))
+            mdb.models[MyModel._modelName].materials[materialName].concreteDamagedPlasticity.ConcreteCompressionHardening(
+            table=(Compress))
+            mdb.models[MyModel._modelName].materials[materialName].concreteDamagedPlasticity.ConcreteTensionStiffening(
+            table=(Tensile),type=STRAIN)
+            mdb.models[MyModel._modelName].materials[materialName].concreteDamagedPlasticity.ConcreteTensionDamage(
+            table=TensionDamage, type=STRAIN) 
+            mdb.models[MyModel._modelName].materials[materialName].concreteDamagedPlasticity.ConcreteCompressionDamage(
+            table=CompressionDamage) 
         
         elif self._materialName=='Matrix':
 
