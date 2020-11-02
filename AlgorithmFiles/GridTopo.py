@@ -3,6 +3,7 @@ from AbaqusFiles.main_Initial import createModel
 from AbaqusFiles.main_Part import PartModule
 from AbaqusFiles.main_Property import PropertyModule
 from AbaqusFiles.main_Property import assignSection
+from AbaqusFiles.main_Property import assignSection_usePackager
 from AbaqusFiles.main_Step import StepModule
 from AbaqusFiles.main_Assembly import AssemblyModule
 from AbaqusFiles.main_Interaction import InteractionModule
@@ -67,6 +68,7 @@ class GridTopo(MyModel):
         Matrix.materialCreate(3.29E+04,0.2,2e-9)
 
         assignSection()
+        #assignSection_usePackager()
 
 
 

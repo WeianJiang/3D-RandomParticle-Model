@@ -4,13 +4,14 @@ from AbaqusFiles.ModelModule import MyModel
 import numpy as np 
 import copy
 import regionToolset
+from AlgorithmFiles.Packager import PackagerModule
 
 class PropertyModule(MyModel):
 
     def __init__(self,materialName):
         self._modelName=MyModel._modelName
         self._path=MyModel._path
-        self._materialName=materialName
+        self._materialName=materialName 
 
 
     def materialCreate(self,elaticModules,possionRatio,density):
@@ -228,7 +229,7 @@ class PropertyModule(MyModel):
                 x_coordinate=node.coordinates[0]
                 y_coordinate=node.coordinates[1]
                 z_coordinate=node.coordinates[2]
-                result=self._positionResult(x_coordinate,y_coordinate,z_coordinate,sphereData)
+                result=_positionResult(x_coordinate,y_coordinate,z_coordinate,sphereData)
                 if result=='Matrix':
                     MatrixCounter+=1
                 elif result=='Interface':
@@ -320,6 +321,8 @@ def _positionResult(xmean,ymean,zmean,sphereData=[]):
 
 
 def assignSection():
+    import time
+    start=time.clock()
     modelName=MyModel._modelName
     path=MyModel._path
     partName='MeshPart'
@@ -412,3 +415,10 @@ def assignSection():
             thicknessAssignment=FROM_SECTION)
     except:
         pass
+
+    end=time.clock()
+    print end-start
+
+def assignSection_usePackager():
+    package=PackagerModule(2)
+    package.assignRandomSection()
